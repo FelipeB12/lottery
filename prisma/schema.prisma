@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password      String
+  role          Role
+  balance       Int      @default(0)
+  parentId      String?  // Admin → Owner, Seller → Admin
+  parent        User?    @relation("UserHierarchy", fields: [parentId], references: [id])
+  children      User[]   @relation("UserHierarchy")
+
+  hasUnreadPrize Boolean  @default(false)
+
+  bets          Bet[]
+  transfersSent     Transfer[] @relation("transferFrom")
+  transfersReceived Transfer[] @relation("transferTo")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  SELLER
+}
+
+model Lottery {
+  id            String   @id @default(cuid())
+  name          String
+  dayOfWeek     Int      // 0–6 (Sunday–Saturday)
+  playTime      String   // "HH:MM" 24h
+  multiplier    Float
+  status        LotteryStatus @default(ACTIVE)
+  winningNumber Int?     // null until result is set
+
+  bets          Bet[]
+}
+
+enum LotteryStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Bet {
+  id         String   @id @default(cuid())
+  lotteryId  String
+  sellerId   String
+  number     Int
+  amount     Int
+  isWinner   Boolean   @default(false)
+  prizeAmount Int      @default(0)
+  createdAt  DateTime  @default(now())
+
+  lottery    Lottery   @relation(fields: [lotteryId], references: [id])
+  seller     User      @relation(fields: [sellerId], references: [id])
+}
+
+model Transfer {
+  id        String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  amount    Int
+  type      TransferType
+  createdAt DateTime @default(now())
+
+  fromUser User @relation("transferFrom", fields: [fromUserId], references: [id])
+  toUser   User @relation("transferTo", fields: [toUserId], references: [id])
+}
+
+enum TransferType {
+  OWNER_TO_ADMIN
+  ADMIN_TO_SELLER
+}
