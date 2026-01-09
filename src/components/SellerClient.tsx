@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import LotterySelector from '@/components/LotterySelector'
 import BetForm from '@/components/BetForm'
@@ -20,12 +20,27 @@ export default function SellerClient({
     user: any,
     lotteries: Lottery[]
 }) {
+    const [mounted, setMounted] = useState(false)
     const [step, setStep] = useState(1)
     const [selectedLotteryIds, setSelectedLotteryIds] = useState<string[]>([])
     const [betDetails, setBetDetails] = useState<{ number: number; amount: number } | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) {
+        return (
+            <DashboardLayout user={user}>
+                <div className="h-full flex items-center justify-center">
+                    <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+            </DashboardLayout>
+        )
+    }
 
     const handleLotterySelect = (ids: string[]) => {
         setSelectedLotteryIds(ids)
