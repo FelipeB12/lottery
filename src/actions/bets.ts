@@ -38,11 +38,25 @@ export async function placeBet(data: z.infer<typeof betSchema>) {
 
         // Check 30-min restriction
         const [hours, minutes] = lottery.playTime.split(':').map(Number)
-        const playTime = new Date()
+
+        // Get strict current time in Colombia
+        const now = new Date()
+        const colombiaTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Bogota" }))
+
+        // Create play deadline for "Today in Colombia"
+        const playTime = new Date(colombiaTime)
         playTime.setHours(hours, minutes, 0, 0)
 
-        const now = new Date()
-        const thirtyMinsFromNow = new Date(now.getTime() + 30 * 60 * 1000)
+        // If the play time is for "tomorrow" relative to UTC but we want today's lottery... 
+        // Actually, simplicity: 
+        // We compare the total minutes of the day if it's a daily cycle, 
+        // but for safety we compare full Date objects assuming "today" is the relevant day.
+
+        // 30 mins buffer
+        const thirtyMinsFromNow = new Date(colombiaTime.getTime() + 30 * 60 * 1000)
+
+        // Debug log if needed (will show in Vercel logs)
+        // console.log({ colombiaTime, playTime, thirtyMinsFromNow })
 
         if (thirtyMinsFromNow >= playTime) {
             throw new Error('Venta cerrada para esta lotería')
