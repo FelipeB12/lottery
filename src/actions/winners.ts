@@ -25,7 +25,7 @@ export async function setWinningNumber(lotteryId: string, winningNumber: number)
     const isTimePassed = now > closeTime
 
     // Allow if status is CLOSED OR if time has passed (even if ACTIVE)
-    if (lottery.status !== 'CLOSED' && !isTimePassed) {
+    if ((lottery.status as any) !== 'CLOSED' && !isTimePassed) {
         throw new Error('La lotería aún no ha cerrado. Espere a la hora del sorteo.')
     }
 

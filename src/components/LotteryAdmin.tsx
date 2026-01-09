@@ -328,22 +328,22 @@ export default function LotteryAdmin({ initialLotteries }: { initialLotteries: L
                     <motion.div
                         key={lottery.id}
                         layout
-                        className={`bg-white p-5 rounded-[28px] border-2 flex items-center gap-4 transition-colors group
+                        className={`bg-white p-3 md:p-5 rounded-[20px] md:rounded-[28px] border-2 flex items-center gap-3 md:gap-4 transition-colors group
                          ${lottery.winningNumber !== null ? 'border-yellow-200 bg-yellow-50/30' : 'border-slate-100 hover:border-red-100'}`}
                     >
-                        <div className="bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center shrink-0 w-20 h-14">
+                        <div className="bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center shrink-0 w-14 h-12 md:w-20 md:h-14">
                             {lottery.winningNumber !== null ? (
-                                <span className="text-xl font-black tracking-widest">{lottery.winningNumber.toString().padStart(4, '0')}</span>
+                                <span className="text-lg md:text-xl font-black tracking-widest">{lottery.winningNumber.toString().padStart(4, '0')}</span>
                             ) : (
-                                lottery.isRepeating ? <RotateCcw className="w-6 h-6" /> : <Calendar className="w-6 h-6" />
+                                lottery.isRepeating ? <RotateCcw className="w-5 h-5 md:w-6 md:h-6" /> : <Calendar className="w-5 h-5 md:w-6 md:h-6" />
                             )}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-slate-800 truncate">{lottery.name}</h3>
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-                                <Clock className="w-3 h-3" /> {lottery.playTime}
-                                <span className="text-slate-200">|</span>
+                            <h3 className="font-bold text-slate-800 truncate text-base md:text-lg">{lottery.name}</h3>
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] md:text-xs font-bold text-slate-400">
+                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {lottery.playTime}</span>
+                                <span className="hidden md:inline text-slate-200">|</span>
                                 <span>{lottery.isRepeating ? days[lottery.dayOfWeek ?? 0] : 'Evento único'}</span>
                                 <span className="text-slate-200">|</span>
                                 <span className="text-red-500">x{lottery.multiplier}</span>
