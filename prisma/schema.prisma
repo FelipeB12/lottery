@@ -44,6 +44,7 @@ model Lottery {
   multiplier    Float
   status        LotteryStatus @default(ACTIVE)
   winningNumber Int?     // null until result is set
+  winSetAt      DateTime? // When the winner was declared
   isRepeating   Boolean  @default(true)
 
   bets          Bet[]
