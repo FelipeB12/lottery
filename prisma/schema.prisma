@@ -38,11 +38,13 @@ enum Role {
 model Lottery {
   id            String   @id @default(cuid())
   name          String
-  dayOfWeek     Int      // 0–6 (Sunday–Saturday)
+  dayOfWeek     Int?     // 0–6 (Sunday–Saturday), null if one-time
+  specificDate  DateTime? // For one-time lotteries
   playTime      String   // "HH:MM" 24h
   multiplier    Float
   status        LotteryStatus @default(ACTIVE)
   winningNumber Int?     // null until result is set
+  isRepeating   Boolean  @default(true)
 
   bets          Bet[]
 }
@@ -68,17 +70,18 @@ model Bet {
 
 model Transfer {
   id        String   @id @default(cuid())
-  fromUserId String
+  fromUserId String?  // Null for SYSTEM recharge
   toUserId   String
   amount    Int
   type      TransferType
   createdAt DateTime @default(now())
 
-  fromUser User @relation("transferFrom", fields: [fromUserId], references: [id])
-  toUser   User @relation("transferTo", fields: [toUserId], references: [id])
+  fromUser User? @relation("transferFrom", fields: [fromUserId], references: [id])
+  toUser   User  @relation("transferTo", fields: [toUserId], references: [id])
 }
 
 enum TransferType {
+  RECHARGE
   OWNER_TO_ADMIN
   ADMIN_TO_SELLER
 }

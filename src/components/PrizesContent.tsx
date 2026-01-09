@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { clearUnreadPrize } from '@/actions/prizes'
 import { Trophy } from 'lucide-react'
+import { formatCurrency, formatDate } from '@/lib/format'
 
 interface Prize {
     id: string
@@ -39,7 +40,7 @@ export default function PrizesContent({ prizes, role }: { prizes: Prize[], role:
                             <div className="flex justify-between items-start mb-4">
                                 <div>
                                     <h3 className="font-bold text-slate-800 text-lg">{prize.lotteryName}</h3>
-                                    <p className="text-xs text-slate-400">{new Date(prize.createdAt).toLocaleDateString()}</p>
+                                    <p className="text-xs text-slate-400">{formatDate(prize.createdAt)}</p>
                                 </div>
                                 <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
                                     Ganador
@@ -53,13 +54,13 @@ export default function PrizesContent({ prizes, role }: { prizes: Prize[], role:
                                 </div>
                                 <div className="bg-slate-50 p-3 rounded-2xl">
                                     <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Apostado</p>
-                                    <p className="text-xl font-bold text-slate-800">${prize.amount}</p>
+                                    <p className="text-xl font-bold text-slate-800">${formatCurrency(prize.amount)}</p>
                                 </div>
                             </div>
 
                             <div className="bg-green-600 text-white p-4 rounded-2xl flex justify-between items-center">
                                 <span className="font-bold">Premio:</span>
-                                <span className="text-2xl font-black">${prize.prizeAmount.toLocaleString()}</span>
+                                <span className="text-2xl font-black">${formatCurrency(prize.prizeAmount)}</span>
                             </div>
 
                             <p className="mt-4 text-xs font-medium text-slate-500 text-center">

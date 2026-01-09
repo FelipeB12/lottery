@@ -53,3 +53,54 @@ export async function createSeller(data: z.infer<typeof userSchema>) {
     revalidatePath('/admin')
     return seller
 }
+
+export async function getUsersForParent(parentId: string) {
+    const session = await getSession()
+    if (!session) throw new Error('No autorizado')
+
+    return await prisma.user.findMany({
+        where: { parentId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            balance: true,
+            createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' }
+    })
+}
+
+export async function updateUser(id: string, data: Partial<z.infer<typeof userSchema>>) {
+    const session = await getSession()
+    if (!session) throw new Error('No autorizado')
+
+    const updateData: any = { ...data }
+    if (data.password) {
+        updateData.password = await bcrypt.hash(data.password, 10)
+    }
+
+    const updated = await prisma.user.update({
+        where: { id },
+        data: updateData
+    })
+
+    revalidatePath('/')
+    return updated
+}
+
+export async function deleteUser(id: string) {
+    const session = await getSession()
+    if (!session || session.role === 'SELLER') {
+        throw new Error('No autorizado')
+    }
+
+    // Check if user has balance or activity (soft delete or safety check)
+    // For now, simple delete
+    await prisma.user.delete({
+        where: { id }
+    })
+
+    revalidatePath('/')
+}

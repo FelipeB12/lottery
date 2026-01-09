@@ -51,8 +51,8 @@ export default function LotterySelector({ lotteries, onContinue }: LotterySelect
                     <button
                         key={day.label}
                         className={`flex-shrink-0 w-16 h-20 rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-colors ${day.active
-                                ? 'bg-black border-black text-white'
-                                : 'bg-white border-slate-200 text-slate-600'
+                            ? 'bg-black border-black text-white'
+                            : 'bg-white border-slate-200 text-slate-600'
                             }`}
                     >
                         <span className="text-xs font-medium">{day.label}</span>
@@ -61,7 +61,7 @@ export default function LotterySelector({ lotteries, onContinue }: LotterySelect
                 ))}
             </div>
 
-            <div className="px-6 space-y-3 pb-24">
+            <div className="px-6 space-y-3 pb-48">
                 <p className="text-sm text-slate-700 font-medium mb-4">
                     Selecciona una o varias de las siguientes loterías y/o sorteos disponibles.
                 </p>
@@ -71,8 +71,8 @@ export default function LotterySelector({ lotteries, onContinue }: LotterySelect
                         key={lottery.id}
                         onClick={() => toggleLottery(lottery.id)}
                         className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all ${selectedIds.includes(lottery.id)
-                                ? 'border-slate-200 bg-white'
-                                : 'border-slate-100 bg-white'
+                            ? 'border-slate-200 bg-white'
+                            : 'border-slate-100 bg-white'
                             }`}
                     >
                         <div className="text-left">
@@ -88,10 +88,10 @@ export default function LotterySelector({ lotteries, onContinue }: LotterySelect
 
             {/* Footer Button */}
             {selectedIds.length > 0 && (
-                <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
+                <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[90%] pointer-events-none z-40">
                     <button
                         onClick={() => onContinue(selectedIds)}
-                        className="w-full bg-black text-white py-4 rounded-full font-bold text-lg pointer-events-auto active:scale-95 transition-transform"
+                        className="w-full bg-black text-white py-4 rounded-full font-bold text-lg pointer-events-auto shadow-2xl active:scale-95 transition-transform"
                     >
                         Continuar
                     </button>

@@ -63,3 +63,36 @@ export async function transferCredit(data: z.infer<typeof transferSchema>) {
         return { success: true }
     })
 }
+
+/**
+ * Allows the OWNER to inject credits into their own account from the system.
+ * This is used for simulation purposes to provide a starting balance.
+ */
+export async function rechargeOwner(amount: number) {
+    const session = await getSession()
+    if (!session || session.role !== 'OWNER') {
+        throw new Error('No autorizado')
+    }
+
+    if (amount <= 0) throw new Error('Monto inválido')
+
+    await prisma.$transaction(async (tx) => {
+        // Increase owner balance
+        await tx.user.update({
+            where: { id: session.id },
+            data: { balance: { increment: amount } }
+        })
+
+        // Record as system recharge
+        await tx.transfer.create({
+            data: {
+                toUserId: session.id,
+                amount,
+                type: 'RECHARGE',
+            }
+        })
+    })
+
+    revalidatePath('/')
+    return { success: true }
+}

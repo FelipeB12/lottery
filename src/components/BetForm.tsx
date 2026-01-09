@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { formatCurrency } from '@/lib/format'
 
 interface BetFormProps {
     lotteryNames: string[]
@@ -55,7 +56,7 @@ export default function BetForm({ lotteryNames, onSubmit, onBack, balance }: Bet
                         inputMode="numeric"
                         value={number}
                         onChange={handleNumberChange}
-                        className="w-full text-5xl font-black p-4 rounded-2xl border-2 border-slate-100 bg-slate-50 text-center tracking-[1rem] outline-none focus:border-red-500 transition-colors"
+                        className="w-full text-5xl font-black p-4 rounded-2xl border-2 border-slate-100 bg-slate-50 text-center tracking-[1rem] outline-none focus:border-red-500 transition-colors text-slate-900 placeholder:text-slate-300"
                         placeholder="0000"
                     />
                 </div>
@@ -69,15 +70,15 @@ export default function BetForm({ lotteryNames, onSubmit, onBack, balance }: Bet
                             inputMode="numeric"
                             value={amount}
                             onChange={handleAmountChange}
-                            className="w-full text-3xl font-bold pl-10 p-5 rounded-2xl border-2 border-slate-100 bg-slate-50 outline-none focus:border-red-500 transition-colors"
+                            className="w-full text-3xl font-bold pl-10 p-5 rounded-2xl border-2 border-slate-100 bg-slate-50 outline-none focus:border-red-500 transition-colors text-slate-900 placeholder:text-slate-300"
                             placeholder="0.00"
                         />
                     </div>
-                    <p className="mt-2 text-xs text-slate-400 text-right">Saldo disponible: ${balance.toLocaleString()}</p>
+                    <p className="mt-2 text-xs text-slate-400 text-right">Saldo disponible: ${formatCurrency(balance)}</p>
                 </div>
             </div>
 
-            <div className="flex gap-4 pt-6">
+            <div className="flex gap-4 pt-6 mb-24">
                 <button
                     onClick={onBack}
                     className="flex-1 bg-slate-100 text-slate-600 py-4 rounded-full font-bold text-lg active:scale-95 transition-transform"

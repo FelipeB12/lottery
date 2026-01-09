@@ -1,25 +1,40 @@
-import { Home, ShoppingCart, Ticket, Fingerprint } from 'lucide-react'
+import { Home, ShoppingCart, Ticket, Dices } from 'lucide-react'
 import Link from 'next/link'
 
 interface TabBarProps {
     activeTab: 'inicio' | 'compras' | 'premios' | 'pay'
     hasUnreadPrize?: boolean
+    role: string
 }
 
-export default function TabBar({ activeTab, hasUnreadPrize }: TabBarProps) {
+export default function TabBar({ activeTab, hasUnreadPrize, role }: TabBarProps) {
+    const getHomeLink = () => {
+        if (role === 'OWNER') return '/owner'
+        if (role === 'ADMIN') return '/admin'
+        return '/seller'
+    }
+
+    const getHistoryLink = () => {
+        if (role === 'OWNER') return '/owner/compras'
+        if (role === 'ADMIN') return '/admin/compras'
+        return '/seller/compras'
+    }
+
+    const canPlay = role === 'OWNER' || role === 'SELLER'
+
     return (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white rounded-full shadow-2xl py-3 px-6 px-1 flex justify-between items-center z-50">
-            <Link href="/inicio" className={`flex flex-col items-center gap-1 ${activeTab === 'inicio' ? 'text-blue-900' : 'text-slate-400'}`}>
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white rounded-full shadow-2xl py-3 px-1 flex justify-between items-center z-50">
+            <Link href={getHomeLink()} className={`flex flex-col items-center gap-1 flex-1 ${activeTab === 'inicio' ? 'text-red-700' : 'text-slate-400'}`}>
                 <Home className="w-6 h-6" />
                 <span className="text-[10px] font-bold">Inicio</span>
             </Link>
 
-            <Link href="/compras" className={`flex flex-col items-center gap-1 ${activeTab === 'compras' ? 'text-blue-900' : 'text-slate-400'}`}>
+            <Link href={getHistoryLink()} className={`flex flex-col items-center gap-1 flex-1 ${activeTab === 'compras' ? 'text-red-700' : 'text-slate-400'}`}>
                 <ShoppingCart className="w-6 h-6" />
                 <span className="text-[10px] font-bold">Compras</span>
             </Link>
 
-            <Link href="/premios" className={`flex flex-col items-center gap-1 relative ${activeTab === 'premios' ? 'text-blue-900' : 'text-slate-400'}`}>
+            <Link href="/premios" className={`flex flex-col items-center gap-1 flex-1 relative ${activeTab === 'premios' ? 'text-red-700' : 'text-slate-400'}`}>
                 <Ticket className="w-6 h-6" />
                 <span className="text-[10px] font-bold">Premios</span>
                 {hasUnreadPrize && (
@@ -27,12 +42,12 @@ export default function TabBar({ activeTab, hasUnreadPrize }: TabBarProps) {
                 )}
             </Link>
 
-            <Link href="/pay" className="flex flex-col items-center">
-                <div className="flex flex-col items-center leading-tight">
-                    <span className="text-red-600 font-extrabold text-lg italic">Tedo</span>
-                    <span className="text-blue-900 font-bold text-xs -mt-1">pay</span>
-                </div>
-            </Link>
+            {canPlay && (
+                <Link href="/pay" className={`flex flex-col items-center gap-1 flex-1 ${activeTab === 'pay' ? 'text-red-700' : 'text-slate-400'}`}>
+                    <Dices className="w-6 h-6" />
+                    <span className="text-[10px] font-bold">Jugar</span>
+                </Link>
+            )}
         </nav>
     )
 }

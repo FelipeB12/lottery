@@ -3,9 +3,10 @@ import prisma from '@/lib/prisma'
 import SellerClient from '@/components/SellerClient'
 import { redirect } from 'next/navigation'
 
-export default async function SellerPage() {
+export default async function PayPage() {
     const session = await getSession()
-    if (!session || session.role !== 'SELLER') redirect('/login')
+    if (!session) redirect('/login')
+    if (session.role === 'ADMIN') redirect('/admin') // Admins can't play
 
     const user = await prisma.user.findUnique({
         where: { id: session.id }

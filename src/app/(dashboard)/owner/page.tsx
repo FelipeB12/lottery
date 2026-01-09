@@ -23,7 +23,12 @@ export default async function OwnerPage() {
     }
 
     return (
-        <DashboardLayout user={user}>
+        <DashboardLayout user={{
+            name: user.name,
+            balance: user.balance,
+            hasUnreadPrize: user.hasUnreadPrize,
+            role: user.role
+        }}>
             <div className="p-6 space-y-6">
                 <h1 className="text-2xl font-bold text-slate-800">Panel de Control</h1>
 

@@ -13,7 +13,7 @@ const betSchema = z.object({
 
 export async function placeBet(data: z.infer<typeof betSchema>) {
     const session = await getSession()
-    if (!session || session.role !== 'SELLER') {
+    if (!session) {
         throw new Error('No autorizado')
     }
 
