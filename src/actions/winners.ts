@@ -159,12 +159,12 @@ export async function getWinnerNotifications() {
     return winningBets.map(bet => ({
         id: bet.id,
         lotteryName: bet.lottery.name,
-        winningNumber: bet.lottery.winningNumber,
+        winningNumber: bet.lottery.winningNumber ?? 0,
         prizeAmount: bet.prizeAmount,
         sellerName: bet.seller.name,
         adminName: bet.seller.parent?.name,
         playedNumber: bet.number, // The number they played (same as winning but explicit)
-        winDate: bet.lottery.winSetAt
+        winDate: bet.lottery.winSetAt ?? new Date()
     }))
 }
 
