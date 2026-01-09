@@ -20,7 +20,7 @@ export default function TabBar({ activeTab, hasUnreadPrize, role }: TabBarProps)
         return '/seller/compras'
     }
 
-    const canPlay = role === 'OWNER' || role === 'SELLER'
+    const canPlay = role === 'OWNER' || role === 'ADMIN' || role === 'SELLER'
 
     return (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white rounded-full shadow-2xl py-3 px-1 flex justify-between items-center z-50">

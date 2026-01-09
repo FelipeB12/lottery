@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, UserPlus, Mail, Shield, Wallet, ArrowRightLeft, X, Save, Trash2, Loader2 } from 'lucide-react'
-import { createAdmin, createSeller, updateUser, deleteUser } from '@/actions/users'
+import { Plus, UserPlus, Mail, Shield, Wallet, ArrowRightLeft, X, Save, Trash2, Loader2, Edit2 } from 'lucide-react'
+import { createAdmin, createSeller, createUser, updateUser, deleteUser } from '@/actions/users'
 import { transferCredit } from '@/actions/transfers'
 import { formatCurrency } from '@/lib/format'
 
@@ -19,19 +19,29 @@ interface UserItem {
 export default function UserManagement({
     initialUsers,
     roleToCreate,
-    currentBalance
+    currentBalance,
+    canChooseRole = false
 }: {
     initialUsers: UserItem[],
     roleToCreate: 'ADMIN' | 'SELLER',
-    currentBalance: number
+    currentBalance: number,
+    canChooseRole?: boolean
 }) {
     const [users, setUsers] = useState(initialUsers)
     const [isAdding, setIsAdding] = useState(false)
+    const [editingUser, setEditingUser] = useState<UserItem | null>(null)
     const [transferringTo, setTransferringTo] = useState<UserItem | null>(null)
     const [amount, setAmount] = useState('')
     const [loading, setLoading] = useState(false)
+    const [selectedRole, setSelectedRole] = useState<'ADMIN' | 'SELLER'>(roleToCreate)
 
     const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    })
+
+    const [editFormData, setEditFormData] = useState({
         name: '',
         email: '',
         password: ''
@@ -40,11 +50,46 @@ export default function UserManagement({
     const handleCreate = async () => {
         setLoading(true)
         try {
-            if (roleToCreate === 'ADMIN') {
+            if (canChooseRole) {
+                await createUser({ ...formData, role: selectedRole })
+            } else if (roleToCreate === 'ADMIN') {
                 await createAdmin(formData)
             } else {
                 await createSeller(formData)
             }
+            window.location.reload()
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleEdit = async () => {
+        if (!editingUser) return
+        setLoading(true)
+        try {
+            const dataToUpdate: any = {
+                name: editFormData.name,
+                email: editFormData.email
+            }
+            if (editFormData.password) {
+                dataToUpdate.password = editFormData.password
+            }
+            await updateUser(editingUser.id, dataToUpdate)
+            window.location.reload()
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleDelete = async (userId: string, userName: string) => {
+        if (!confirm(`¿Estás seguro de eliminar a ${userName}?`)) return
+        setLoading(true)
+        try {
+            await deleteUser(userId)
             window.location.reload()
         } catch (error: any) {
             alert(error.message)
@@ -74,7 +119,7 @@ export default function UserManagement({
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tight">
-                        {roleToCreate === 'ADMIN' ? 'Administradores' : 'Vendedores'}
+                        {canChooseRole ? 'Usuarios' : (roleToCreate === 'ADMIN' ? 'Administradores' : 'Vendedores')}
                     </h1>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                         Gestión de cuenta y créditos
@@ -114,6 +159,19 @@ export default function UserManagement({
                             onChange={e => setFormData({ ...formData, email: e.target.value })}
                             className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold text-slate-900 placeholder:text-slate-500 placeholder:font-black placeholder:uppercase placeholder:tracking-widest placeholder:text-[10px]"
                         />
+                        {canChooseRole && (
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipo de Cuenta</label>
+                                <select
+                                    value={selectedRole}
+                                    onChange={e => setSelectedRole(e.target.value as 'ADMIN' | 'SELLER')}
+                                    className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold text-slate-900"
+                                >
+                                    <option value="ADMIN">Administrador</option>
+                                    <option value="SELLER">Vendedor</option>
+                                </select>
+                            </div>
+                        )}
                         <input
                             type="password"
                             placeholder="Contraseña (Mín. 6 caracteres)"
@@ -180,6 +238,66 @@ export default function UserManagement({
                         </motion.div>
                     </div>
                 )}
+
+                {editingUser && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm space-y-6"
+                        >
+                            <div className="flex justify-between items-center">
+                                <div className="text-center space-y-2 flex-1">
+                                    <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                                        <Edit2 className="w-8 h-8" />
+                                    </div>
+                                    <h3 className="text-xl font-black text-slate-800">Editar Usuario</h3>
+                                    <p className="text-sm text-slate-400">Modificando <b>{editingUser.name}</b></p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <input
+                                    type="text"
+                                    placeholder="Nombre Completo"
+                                    value={editFormData.name}
+                                    onChange={e => setEditFormData({ ...editFormData, name: e.target.value })}
+                                    className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold text-slate-900"
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Correo Electrónico"
+                                    value={editFormData.email}
+                                    onChange={e => setEditFormData({ ...editFormData, email: e.target.value })}
+                                    className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold text-slate-900"
+                                />
+                                <input
+                                    type="password"
+                                    placeholder="Nueva Contraseña (dejar vacío para no cambiar)"
+                                    value={editFormData.password}
+                                    onChange={e => setEditFormData({ ...editFormData, password: e.target.value })}
+                                    className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold text-slate-900"
+                                />
+
+                                <div className="flex gap-3 pt-2">
+                                    <button
+                                        onClick={() => setEditingUser(null)}
+                                        className="flex-1 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl"
+                                    >
+                                        CANCELAR
+                                    </button>
+                                    <button
+                                        onClick={handleEdit}
+                                        disabled={loading || !editFormData.name || !editFormData.email}
+                                        className="flex-[2] py-4 bg-blue-600 text-white font-black rounded-2xl shadow-lg shadow-blue-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    >
+                                        {loading ? <Loader2 className="animate-spin" /> : 'GUARDAR'}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
             </AnimatePresence>
 
             <div className="space-y-4">
@@ -197,12 +315,33 @@ export default function UserManagement({
                                 <Wallet className="w-3 h-3 mr-1" /> ${formatCurrency(user.balance)}
                             </div>
                         </div>
-                        <button
-                            onClick={() => setTransferringTo(user)}
-                            className="w-12 h-12 bg-slate-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-50 transition-colors active:scale-95"
-                        >
-                            <ArrowRightLeft className="w-5 h-5" />
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => {
+                                    setEditingUser(user)
+                                    setEditFormData({
+                                        name: user.name,
+                                        email: user.email,
+                                        password: ''
+                                    })
+                                }}
+                                className="w-10 h-10 bg-slate-50 text-slate-600 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-colors active:scale-95"
+                            >
+                                <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => handleDelete(user.id, user.name)}
+                                className="w-10 h-10 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center hover:bg-red-100 transition-colors active:scale-95"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => setTransferringTo(user)}
+                                className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-100 transition-colors active:scale-95"
+                            >
+                                <ArrowRightLeft className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>

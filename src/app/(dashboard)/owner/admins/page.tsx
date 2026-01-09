@@ -4,7 +4,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import UserManagement from '@/components/UserManagement'
 import { redirect } from 'next/navigation'
 
-export default async function OwnerAdminsPage() {
+export default async function OwnerUsersPage() {
     const session = await getSession()
     if (!session || session.role !== 'OWNER') redirect('/login')
 
@@ -14,8 +14,11 @@ export default async function OwnerAdminsPage() {
 
     if (!owner) redirect('/login')
 
-    const admins = await prisma.user.findMany({
-        where: { role: 'ADMIN' },
+    // Fetch all users (Admins and Sellers) for the Owner
+    const users = await prisma.user.findMany({
+        where: {
+            role: { in: ['ADMIN', 'SELLER'] }
+        },
         orderBy: { createdAt: 'desc' }
     })
 
@@ -27,9 +30,10 @@ export default async function OwnerAdminsPage() {
             role: owner.role
         }}>
             <UserManagement
-                initialUsers={admins}
+                initialUsers={users}
                 roleToCreate="ADMIN"
                 currentBalance={owner.balance}
+                canChooseRole={true}
             />
         </DashboardLayout>
     )

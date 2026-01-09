@@ -35,7 +35,7 @@ export async function createAdmin(data: z.infer<typeof userSchema>) {
 
 export async function createSeller(data: z.infer<typeof userSchema>) {
     const session = await getSession()
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || (session.role !== 'ADMIN' && session.role !== 'OWNER')) {
         throw new Error('No autorizado')
     }
 
@@ -51,7 +51,31 @@ export async function createSeller(data: z.infer<typeof userSchema>) {
     })
 
     revalidatePath('/admin')
+    revalidatePath('/owner')
     return seller
+}
+
+// Unified user creation with role selection (for Owner)
+export async function createUser(data: z.infer<typeof userSchema> & { role: 'ADMIN' | 'SELLER' }) {
+    const session = await getSession()
+    if (!session || session.role !== 'OWNER') {
+        throw new Error('No autorizado')
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10)
+
+    const user = await prisma.user.create({
+        data: {
+            name: data.name,
+            email: data.email,
+            password: hashedPassword,
+            role: data.role,
+            parentId: session.id,
+        }
+    })
+
+    revalidatePath('/owner')
+    return user
 }
 
 export async function getUsersForParent(parentId: string) {
@@ -75,6 +99,29 @@ export async function getUsersForParent(parentId: string) {
 export async function updateUser(id: string, data: Partial<z.infer<typeof userSchema>>) {
     const session = await getSession()
     if (!session) throw new Error('No autorizado')
+
+    // Get the user being updated
+    const userToUpdate = await prisma.user.findUnique({
+        where: { id },
+        select: { parentId: true, role: true }
+    })
+
+    if (!userToUpdate) throw new Error('Usuario no encontrado')
+
+    // Validate permissions: can only edit users you created
+    if (session.role === 'ADMIN' && userToUpdate.parentId !== session.id) {
+        throw new Error('No autorizado para editar este usuario')
+    }
+
+    // Admins cannot edit other Admins
+    if (session.role === 'ADMIN' && userToUpdate.role === 'ADMIN') {
+        throw new Error('No autorizado para editar administradores')
+    }
+
+    // Owner can edit any Admin or Seller
+    if (session.role === 'OWNER' && userToUpdate.role === 'OWNER') {
+        throw new Error('No se puede editar la cuenta del dueño')
+    }
 
     const updateData: any = { ...data }
     if (data.password) {

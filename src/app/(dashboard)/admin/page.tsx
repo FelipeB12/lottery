@@ -56,16 +56,6 @@ export default async function AdminPage() {
                         </div>
                     </Link>
 
-                    <Link href="/admin/bets" className="flex items-center gap-4 p-5 bg-white border-2 border-slate-100 rounded-3xl hover:border-slate-200 transition-colors">
-                        <div className="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center">
-                            <ListChecks className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1">
-                            <p className="font-bold text-slate-700">Ver Apuestas</p>
-                            <p className="text-xs text-slate-400">Ventas en tiempo real</p>
-                        </div>
-                    </Link>
-
                     <Link href="/admin/transfers" className="flex items-center gap-4 p-5 bg-white border-2 border-slate-100 rounded-3xl hover:border-slate-200 transition-colors">
                         <div className="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center">
                             <History className="w-6 h-6" />

@@ -63,7 +63,7 @@ export default async function OwnerPage() {
                             <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
                                 <Users className="w-6 h-6" />
                             </div>
-                            <span className="font-bold text-slate-700">Gestionar Admins</span>
+                            <span className="font-bold text-slate-700">Gestionar Usuarios</span>
                         </div>
                         <Plus className="text-slate-300" />
                     </Link>
