@@ -6,7 +6,6 @@ import { redirect } from 'next/navigation'
 export default async function PayPage() {
     const session = await getSession()
     if (!session) redirect('/login')
-    if (session.role === 'ADMIN') redirect('/admin') // Admins can't play
 
     const user = await prisma.user.findUnique({
         where: { id: session.id }

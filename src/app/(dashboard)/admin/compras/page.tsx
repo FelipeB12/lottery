@@ -16,7 +16,10 @@ export default async function AdminBetsPage() {
 
     const bets = await prisma.bet.findMany({
         where: {
-            seller: { parentId: user.id }
+            OR: [
+                { sellerId: user.id }, // Admin's own bets
+                { seller: { parentId: user.id } } // Sellers' bets
+            ]
         },
         include: {
             lottery: { select: { name: true } },
