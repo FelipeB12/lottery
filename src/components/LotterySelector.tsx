@@ -21,9 +21,11 @@ export default function LotterySelector({ lotteries, onContinue }: LotterySelect
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [selectedDayIndex, setSelectedDayIndex] = useState(0) // 0 = Today
     const [days, setDays] = useState<{ label: string, date: string, dayOfWeek: number, fullDate: Date }[]>([])
+    const [currentDateDisplay, setCurrentDateDisplay] = useState('')
 
     useEffect(() => {
         const d = []
+        setCurrentDateDisplay(new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }))
         // Get 'today' in Colombia (GMT-5)
         const now = new Date()
         const colombiaTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Bogota" }))
@@ -84,7 +86,7 @@ export default function LotterySelector({ lotteries, onContinue }: LotterySelect
         <div className="flex flex-col h-full bg-white">
             {/* Debug Info */}
             <div className="text-[10px] text-center text-slate-300 pt-2">
-                Hoy: {new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" })}
+                Hoy: {currentDateDisplay}
             </div>
 
             {/* Step Indicator */}
