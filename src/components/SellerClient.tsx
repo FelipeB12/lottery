@@ -11,6 +11,9 @@ interface Lottery {
     id: string
     name: string
     closingTime: string
+    dayOfWeek?: number | null
+    isRepeating?: boolean
+    specificDate?: string | null
 }
 
 export default function SellerClient({
