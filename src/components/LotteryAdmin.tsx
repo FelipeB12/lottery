@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Edit2, Calendar, Clock, RotateCcw, Save, X, Trash2, Trophy, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { createLottery, updateLottery, updateLotteryStatus } from '@/actions/lottery'
@@ -82,6 +82,13 @@ export default function LotteryAdmin({ initialLotteries }: { initialLotteries: L
             setIsSubmittingWinner(false)
         }
     }
+
+    // Real-time clock to update winner button availability
+    const [now, setNow] = useState(new Date())
+    useEffect(() => {
+        const timer = setInterval(() => setNow(new Date()), 30000) // Update every 30s
+        return () => clearInterval(timer)
+    }, [])
 
     return (
         <div className="p-6 space-y-8">
@@ -346,15 +353,24 @@ export default function LotteryAdmin({ initialLotteries }: { initialLotteries: L
                         </div>
 
                         <div className="flex items-center gap-2">
-                            {/* Winner Button - Only for CLOSED lotteries with no winner yet */}
-                            {lottery.status !== 'ACTIVE' && lottery.winningNumber === null && (
-                                <button
-                                    onClick={() => setSettingWinnerFor(lottery)}
-                                    className="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-xl font-bold text-xs hover:bg-yellow-200 transition-colors"
-                                >
-                                    DEFINIR GANADOR
-                                </button>
-                            )}
+                            {/* Winner Button - Show if CLOSED or if ACTIVE but time passed */}
+                            {(() => {
+                                const [h, m] = lottery.playTime.split(':').map(Number)
+                                const closeTime = new Date()
+                                closeTime.setHours(h, m, 0, 0)
+                                const isTimePassed = now > closeTime
+
+                                const canSet = lottery.winningNumber === null && (lottery.status !== 'ACTIVE' || isTimePassed)
+
+                                return canSet ? (
+                                    <button
+                                        onClick={() => setSettingWinnerFor(lottery)}
+                                        className="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-xl font-bold text-xs hover:bg-yellow-200 transition-colors"
+                                    >
+                                        DEFINIR GANADOR
+                                    </button>
+                                ) : null
+                            })()}
 
                             {lottery.winningNumber === null && (
                                 <>
