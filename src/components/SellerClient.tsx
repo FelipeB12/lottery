@@ -1,10 +1,11 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
 import LotterySelector from '@/components/LotterySelector'
 import BetForm from '@/components/BetForm'
 import { placeBet } from '@/actions/bets'
 import { useRouter } from 'next/navigation'
-import { X } from 'lucide-react'
 
 interface Lottery {
     id: string
@@ -109,14 +110,16 @@ export default function SellerClient({
                             </div>
                         )}
                         {error && (
-                            <div className="fixed top-24 left-6 right-6 bg-red-100 border border-red-200 text-red-700 p-4 rounded-2xl font-bold text-center animate-in fade-in slide-in-from-top-4 shadow-lg z-50 flex items-center justify-between gap-4">
-                                <span className="flex-1">{error}</span>
+                            <div className="fixed top-24 left-6 right-6 bg-red-100 text-red-600 p-4 rounded-2xl font-bold text-center z-50 shadow-xl relative animate-in slide-in-from-top-4">
                                 <button
                                     onClick={() => setError(null)}
-                                    className="w-8 h-8 flex items-center justify-center bg-red-200 rounded-full hover:bg-red-300 transition-colors"
+                                    className="absolute top-2 right-2 text-red-400 hover:text-red-700 p-1"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
                                 </button>
+                                {error}
                             </div>
                         )}
                     </div>
