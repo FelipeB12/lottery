@@ -341,7 +341,7 @@ export default function LotteryAdmin({ initialLotteries }: { initialLotteries: L
 
                         <div className="flex-1 min-w-0">
                             <h3 className="font-bold text-slate-800 truncate text-base md:text-lg">{lottery.name}</h3>
-                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] md:text-xs font-bold text-slate-400">
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 md:gap-x-8 text-[10px] md:text-xs font-bold text-slate-400">
                                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {lottery.playTime}</span>
                                 <span className="hidden md:inline text-slate-200">|</span>
                                 <span>{lottery.isRepeating ? days[lottery.dayOfWeek ?? 0] : 'Evento único'}</span>
