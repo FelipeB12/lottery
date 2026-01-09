@@ -4,6 +4,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Users, Ticket, History } from 'lucide-react'
+import WinnerNotifications from '@/components/WinnerNotifications'
 
 export default async function OwnerPage() {
     const session = await getSession()
@@ -29,6 +30,7 @@ export default async function OwnerPage() {
             hasUnreadPrize: user.hasUnreadPrize,
             role: user.role
         }}>
+            <WinnerNotifications userRole="OWNER" />
             <div className="p-6 space-y-6">
                 <h1 className="text-2xl font-bold text-slate-800">Panel de Control</h1>
 

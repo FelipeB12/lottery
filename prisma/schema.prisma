@@ -53,6 +53,7 @@ model Lottery {
 enum LotteryStatus {
   ACTIVE
   INACTIVE
+  CLOSED
 }
 
 model Bet {

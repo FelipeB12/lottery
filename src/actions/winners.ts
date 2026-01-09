@@ -15,8 +15,29 @@ export async function setWinningNumber(lotteryId: string, winningNumber: number)
     })
 
     if (!lottery) throw new Error('Lotería no encontrada')
-    if (lottery.status !== 'CLOSED') throw new Error('La lotería debe estar cerrada para definir ganador')
+
+    // Check if time has passed
+    const now = new Date()
+    const [hours, minutes] = lottery.playTime.split(':').map(Number)
+    const closeTime = new Date()
+    closeTime.setHours(hours, minutes, 0, 0)
+
+    const isTimePassed = now > closeTime
+
+    // Allow if status is CLOSED OR if time has passed (even if ACTIVE)
+    if (lottery.status !== 'CLOSED' && !isTimePassed) {
+        throw new Error('La lotería aún no ha cerrado. Espere a la hora del sorteo.')
+    }
+
     if (lottery.winningNumber !== null) throw new Error('Esta lotería ya tiene un número ganador')
+
+    // If it was still ACTIVE but time passed, close it now
+    if (lottery.status === 'ACTIVE') {
+        await prisma.lottery.update({
+            where: { id: lotteryId },
+            data: { status: 'CLOSED' }
+        })
+    }
 
     // 1. Update lottery with winning number
     await prisma.lottery.update({

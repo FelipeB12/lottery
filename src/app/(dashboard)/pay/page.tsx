@@ -20,7 +20,10 @@ export default async function PayPage() {
     const formattedLotteries = lotteries.map(l => ({
         id: l.id,
         name: l.name,
-        closingTime: l.playTime
+        closingTime: l.playTime,
+        dayOfWeek: l.dayOfWeek,
+        isRepeating: l.isRepeating,
+        specificDate: l.specificDate ? l.specificDate.toISOString() : null
     }))
 
     return (

@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import DashboardLayout from '@/components/DashboardLayout'
 import { redirect } from 'next/navigation'
 import { ShoppingCart, DollarSign } from 'lucide-react'
+import WinnerNotifications from '@/components/WinnerNotifications'
 
 export default async function SellerPage() {
     const session = await getSession()
@@ -29,6 +30,7 @@ export default async function SellerPage() {
             hasUnreadPrize: user.hasUnreadPrize,
             role: user.role
         }}>
+            <WinnerNotifications userRole="SELLER" />
             <div className="p-6 space-y-6">
                 <h1 className="text-2xl font-bold text-slate-800">Panel Vendedor</h1>
 

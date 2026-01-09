@@ -253,11 +253,11 @@ export default function LotteryAdmin({ initialLotteries }: { initialLotteries: L
                                         type="number"
                                         value={winningNumberInput}
                                         onChange={e => setWinningNumberInput(e.target.value)}
-                                        placeholder="00"
-                                        className="w-32 h-32 text-6xl font-black text-center bg-slate-50 border-4 border-slate-100 rounded-3xl outline-none focus:border-yellow-400 transition-colors mx-auto block"
-                                        maxLength={2}
+                                        placeholder="0000"
+                                        className="w-48 h-32 text-6xl font-black text-center bg-slate-50 border-4 border-slate-100 rounded-3xl outline-none focus:border-yellow-400 transition-colors mx-auto block tracking-widest"
+                                        maxLength={4}
                                     />
-                                    <p className="text-xs text-slate-400">Ingresa el número ganador (0-99)</p>
+                                    <p className="text-xs text-slate-400">Ingresa el número ganador (0000-9999)</p>
                                     <button
                                         onClick={() => {
                                             if (winningNumberInput === '') return
@@ -331,11 +331,9 @@ export default function LotteryAdmin({ initialLotteries }: { initialLotteries: L
                         className={`bg-white p-5 rounded-[28px] border-2 flex items-center gap-4 transition-colors group
                          ${lottery.winningNumber !== null ? 'border-yellow-200 bg-yellow-50/30' : 'border-slate-100 hover:border-red-100'}`}
                     >
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 
-                            ${lottery.winningNumber !== null ? 'bg-yellow-100 text-yellow-600' :
-                                lottery.status === 'ACTIVE' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-400'}`}>
+                        <div className="bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center shrink-0 w-20 h-14">
                             {lottery.winningNumber !== null ? (
-                                <span className="text-xl font-black">{lottery.winningNumber}</span>
+                                <span className="text-xl font-black tracking-widest">{lottery.winningNumber.toString().padStart(4, '0')}</span>
                             ) : (
                                 lottery.isRepeating ? <RotateCcw className="w-6 h-6" /> : <Calendar className="w-6 h-6" />
                             )}

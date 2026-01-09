@@ -4,6 +4,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Users, CreditCard, ListChecks, History } from 'lucide-react'
+import WinnerNotifications from '@/components/WinnerNotifications'
 
 export default async function AdminPage() {
     const session = await getSession()
@@ -27,6 +28,7 @@ export default async function AdminPage() {
             hasUnreadPrize: user.hasUnreadPrize,
             role: user.role
         }}>
+            <WinnerNotifications userRole="ADMIN" />
             <div className="p-6 space-y-6">
                 <h1 className="text-2xl font-bold text-slate-800">Panel Admin</h1>
 
