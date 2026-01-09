@@ -300,22 +300,24 @@ export default function UserManagement({
                 )}
             </AnimatePresence>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
                 {users.map(user => (
-                    <div key={user.id} className="bg-white p-5 rounded-[32px] border-2 border-slate-100 flex items-center gap-4">
-                        <div className="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shrink-0">
-                            <Shield className="w-6 h-6" />
+                    <div key={user.id} className="bg-white p-3 md:p-5 rounded-[20px] md:rounded-[32px] border-2 border-slate-100 flex items-center gap-3 md:gap-4 transition-colors hover:border-blue-100">
+                        <div className="w-12 h-12 md:w-14 md:h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shrink-0">
+                            <Shield className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-slate-800 truncate">{user.name}</h3>
-                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
-                                <Mail className="w-3 h-3" /> {user.email}
-                            </div>
-                            <div className="mt-1 inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black">
-                                <Wallet className="w-3 h-3 mr-1" /> ${formatCurrency(user.balance)}
+                            <h3 className="font-bold text-slate-800 truncate text-base md:text-lg">{user.name}</h3>
+                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 mt-0.5">
+                                <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-tighter">
+                                    <Mail className="w-3 h-3" /> <span className="truncate max-w-[120px] md:max-w-none">{user.email}</span>
+                                </div>
+                                <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] md:text-xs font-black self-start md:self-auto">
+                                    <Wallet className="w-3 h-3 mr-1" /> ${formatCurrency(user.balance)}
+                                </div>
                             </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1.5 md:gap-2">
                             <button
                                 onClick={() => {
                                     setEditingUser(user)
@@ -325,19 +327,19 @@ export default function UserManagement({
                                         password: ''
                                     })
                                 }}
-                                className="w-10 h-10 bg-slate-50 text-slate-600 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-colors active:scale-95"
+                                className="w-9 h-9 md:w-10 md:h-10 bg-slate-50 text-slate-600 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-colors active:scale-95"
                             >
                                 <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => handleDelete(user.id, user.name)}
-                                className="w-10 h-10 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center hover:bg-red-100 transition-colors active:scale-95"
+                                className="w-9 h-9 md:w-10 md:h-10 bg-red-50 text-red-600 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-red-100 transition-colors active:scale-95"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => setTransferringTo(user)}
-                                className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-100 transition-colors active:scale-95"
+                                className="w-9 h-9 md:w-10 md:h-10 bg-blue-50 text-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-blue-100 transition-colors active:scale-95"
                             >
                                 <ArrowRightLeft className="w-4 h-4" />
                             </button>
